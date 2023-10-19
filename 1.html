@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Таблица</title>
+</head>
+<body>
+  <table>
+    <thead>
+      <tr>
+        <th>Заголовок</th>
+        <th>Данные</th>
+        <th>Удалить</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Сюда будет добавляться содержимое -->
+    </tbody>
+  </table>
+
+  <script>
+    // ЗАДАНИЕ 1.
+    function updateTable() {
+      // Очистить таблицу (удалить все tr в tbody)
+      const tbody = document.querySelector('tbody');
+      while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+      }
+
+      // Зачитать данные из текущего хранилища (предположим, что хранилище называется storage)
+      const storage = getStorage();
+      const data = JSON.parse(storage.getItem('data'));
+
+      if (!data) {
+        // Если данных нет, создать tr с emptyHeader
+        const tr = document.createElement('tr');
+        const td1 = document.createElement('td');
+        td1.textContent = 'emptyHeader';
+        tr.appendChild(td1);
+        tbody.appendChild(tr);
+      } else {
+        // Если есть данные, заполнить таблицу
+        for (const key in data) {
+          const tr = document.createElement('tr');
+          const td1 = document.createElement('td');
+          td1.textContent = data[key];
+          const td2 = document.createElement('td');
+          td2.textContent = 'X';
+          td2.onclick = () => deleteItem(key);
+          td2.style.cursor = 'pointer';
+          tr.appendChild(td1);
+          tr.appendChild(td2);
+          tbody.appendChild(tr);
+        }
+      }
+    }
+
+    // ЗАДАНИЕ 2.
+    let currentStorage;
+
+    function getStorage() {
+      currentStorage = localStorage; // Выбрать текущее хранилище (localStorage или sessionStorage)
+      return currentStorage;
+    }
+
+    function deleteItem(key) {
+      // Удалить запись из хранилища и обновить таблицу
+      currentStorage.removeItem(key);
+      updateTable();
+    }
+
+    // Добавить функцию updateTable как обработчик события onload текущего окна
+    window.onload = updateTable;
+
+
+    // ЗАДАНИЕ 3.  
+
+    // Функция saveItem добавляет новую запись в хранилище и вызывает updateTable.
+function saveItem(key, value) {
+    storage[key] = value; // Добавляем новую запись в хранилище по указанному ключу.
+    updateTable(); // Вызываем функцию обновления таблицы (предположим, что она уже определена где-то в вашем коде).
+}
+
+    // ЗАДАНИЕ 4. 
+    
+    // Функция deleteItem удаляет запись из хранилища, если пользователь согласен, и вызывает updateTable.
+function deleteItem(key) {
+    // Проверяем, существует ли запись с указанным ключом в хранилище.
+    if (storage.hasOwnProperty(key)) {
+        // Спрашиваем у пользователя подтверждение удаления.
+        var confirmation = confirm("Вы уверены, что хотите удалить эту запись?");
+        
+        // Если пользователь подтвердил удаление, удаляем запись из хранилища и вызываем updateTable.
+        if (confirmation) {
+            delete storage[key]; // Удаляем запись из хранилища.
+            updateTable(); // Вызываем функцию обновления таблицы.
+        }
+    } else {
+        alert("Запись с указанным ключом не найдена."); // Предупреждаем пользователя, если запись не найдена.
+    }
+}
+    // ЗАДАНИЕ 5.
+
+    function clearStorage() {
+  // Спросить у пользователя, уверен ли он в очистке хранилища
+  var userResponse = confirm("Вы уверены, что хотите полностью очистить локальное хранилище?");
+
+  if (userResponse) {
+    // Если пользователь согласен, очистить локальное хранилище
+    localStorage.clear();
+
+    // Вызвать функцию updateTable() (предположим, что такая функция существует)
+    updateTable();
+
+    alert("Локальное хранилище очищено.");
+  } else {
+    alert("Очистка локального хранилища отменена.");
+  }
+}
+  </script>
+</body>
+</html>
